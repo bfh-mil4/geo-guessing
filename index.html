@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Geo-Guessing Spiel</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVrbEkivEdRQj8Hc9nf3ju6xqbqYba3PQ&callback=initMap" async defer></script>
+    <style>
+      /* Map Höhe und Breite */
+      #map {
+        height: 100%;
+        width: 100%;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <script>
+      // Initialisiere Google Map
+      function initMap() {
+        // Beispiel für zufällige Koordinaten (z.B. irgendwo in Australien)
+        var randomLocation = { lat: -25.344, lng: 131.036 };
+        
+        // Erstellt die Karte, zentriert auf den zufälligen Ort
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 4,
+          center: randomLocation
+        });
+
+        // Setzt einen Marker auf den zufälligen Ort
+        var marker = new google.maps.Marker({
+          position: randomLocation,
+          map: map
+        });
+      }
+    </script>
+  </body>
+</html>
