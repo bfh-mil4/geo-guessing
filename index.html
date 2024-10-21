@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Geo-Guessing Spiel</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVrbEkivEdRQj8Hc9nf3ju6xqbqYba3PQ&callback=initMap" async defer></script>
+    <title>Geo-Guessing Game</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVrbEkivEdRQj8Hc9nf3ju6xqbqYba3PQ&libraries=geometry"></script>
     <style>
-      /* Map Höhe und Breite */
+      /* Map container styling */
       #map {
         height: 100%;
         width: 100%;
@@ -14,29 +14,73 @@
         margin: 0;
         padding: 0;
       }
+      #info {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: white;
+        padding: 10px;
+        border: 2px solid black;
+        font-family: Arial, sans-serif;
+        z-index: 5;
+      }
     </style>
   </head>
   <body>
+    <div id="info">Klicke auf die Karte, um den Standort zu erraten!</div>
     <div id="map"></div>
 
     <script>
+      var map;
+      var randomLocation;
+      var marker;
+      var gameOver = false;
+
       // Initialisiere Google Map
       function initMap() {
-        // Beispiel für zufällige Koordinaten (z.B. irgendwo in Australien)
-        var randomLocation = { lat: -25.344, lng: 131.036 };
-        
-        // Erstellt die Karte, zentriert auf den zufälligen Ort
-        var map = new google.maps.Map(document.getElementById('map'), {
+        // Generiere einen zufälligen Ort (z.B. irgendwo in Europa)
+        randomLocation = {lat: (Math.random() * 30) + 35, lng: (Math.random() * 40) - 10};
+
+        // Erstelle die Karte, zentriert auf Europa
+        map = new google.maps.Map(document.getElementById('map'), {
           zoom: 4,
-          center: randomLocation
+          center: {lat: 50.0, lng: 10.0} // Europa als Startansicht
         });
 
-        // Setzt einen Marker auf den zufälligen Ort
-        var marker = new google.maps.Marker({
-          position: randomLocation,
-          map: map
+        // Füge einen Klick-Listener hinzu, damit der Benutzer einen Ort raten kann
+        map.addListener('click', function(event) {
+          if (gameOver) return;
+
+          var guessedLocation = event.latLng;
+
+          // Setze einen Marker für die Vermutung des Spielers
+          if (marker) {
+            marker.setMap(null);
+          }
+          marker = new google.maps.Marker({
+            position: guessedLocation,
+            map: map,
+            label: "Dein Tipp"
+          });
+
+          // Berechne die Entfernung zwischen dem zufälligen Ort und dem geratenen Ort
+          var distance = google.maps.geometry.spherical.computeDistanceBetween(guessedLocation, randomLocation);
+
+          // Zeige die Entfernung an
+          alert('Du bist ' + Math.round(distance / 1000) + ' Kilometer entfernt!');
+
+          // Zeige den zufälligen Ort auf der Karte an
+          new google.maps.Marker({
+            position: randomLocation,
+            map: map,
+            label: "Zielort"
+          });
+
+          gameOver = true;
         });
       }
+
+      window.onload = initMap;
     </script>
   </body>
 </html>
